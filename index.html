@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Лабораторна робота 3 — Задача Рюкзак (Варіант 23)</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="page-header">
+    <h1>Лабораторна робота №3</h1>
+    <h2>Моделювання задачі «Рюкзак» методом динамічного програмування</h2>
+    <p class="subtitle">Варіант 23 · Методологія: Feature-Driven Development </p>
+  </header>
+
+  <main class="container">
+
+    <!-- ВХІДНІ ДАНІ + ВИБІР ПРЕДМЕТІВ -->
+    <section class="panel">
+      <h3>📦 Вхідні дані та вибір предметів (Варіант 23)</h3>
+      <div id="variant-info" class="variant-info"></div>
+
+      <div class="capacity-row">
+        <label for="capacityInput"><strong>Місткість рюкзака (W):</strong></label>
+        <input id="capacityInput" type="number" min="1" max="50" value="14" />
+        <span class="cap-hint">( 1 – 50 )</span>
+      </div>
+
+      <div class="select-hint-row">
+        <span>✅ Оберіть предмети для задачі (мінімум 1):</span>
+        <button id="selectAllBtn" class="mini-btn">Вибрати всі</button>
+        <button id="clearAllBtn"  class="mini-btn secondary">Скинути вибір</button>
+      </div>
+
+      <div id="items-list" class="items-list"></div>
+      <p id="selection-summary" class="selection-summary"></p>
+    </section>
+
+    <!-- КЕРУВАННЯ -->
+    <section class="panel controls">
+      <h3>⚙️ Керування</h3>
+      <div class="buttons">
+        <button id="buildBtn">🗂 Побудувати таблицю</button>
+        <button id="stepBtn">▶ Покроково</button>
+        <button id="restoreBtn">🔍 Відновити розв'язок</button>
+        <button id="resetBtn" class="secondary">↺ Скинути</button>
+      </div>
+      <div id="status" class="status">Оберіть предмети та натисніть кнопку для початку.</div>
+    </section>
+
+    <!-- ТАБЛИЦЯ ДП -->
+    <section class="panel">
+      <h3>📊 Таблиця динамічного програмування dp[i][w]</h3>
+      <p class="hint">Рядки — вибрані предмети (i = 0…n'), стовпці — місткість (w = 0…W).</p>
+      <div class="table-wrapper" id="table-wrapper">
+        <p class="empty-hint">Оберіть предмети та дію для побудови таблиці…</p>
+      </div>
+      <div class="legend">
+        <div class="legend-item">
+          <span class="legend-color" style="background:#fff3b0;"></span>
+          <span>Поточна комірка</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color" style="background:#bbf7d0;"></span>
+          <span>Шлях відновлення</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color" style="background:#dbeafe;"></span>
+          <span>Вибраний предмет</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- РЕЗУЛЬТАТИ -->
+    <section class="panel">
+      <h3>✅ Результати</h3>
+      <div id="results" class="results">
+        <p><strong>Максимальна цінність:</strong>      <span id="res-value">—</span></p>
+        <p><strong>Вибрані предмети (номери):</strong>  <span id="res-items">—</span></p>
+        <p><strong>Сумарна вага:</strong>               <span id="res-weight">—</span></p>
+        <p><strong>Сумарна цінність:</strong>           <span id="res-total">—</span></p>
+      </div>
+    </section>
+
+    <!-- МЕТОДИ -->
+    <section class="panel">
+      <h3>🔗 Діаграма взаємодії методів вирішення задачі «Рюкзак»</h3>
+      <div class="methods-grid">
+        <div class="method-card">
+          <h4>Метод 1 — Груба сила</h4>
+          <p>Перебір усіх 2ⁿ підмножин. Точний, але O(2ⁿ).</p>
+          <span class="complexity">O(2ⁿ)</span>
+        </div>
+        <div class="method-card">
+          <h4>Метод 2 — Рекурсія</h4>
+          <p>Розбиття на підзадачі. З мемоізацією — O(n·W).</p>
+          <span class="complexity">O(2ⁿ) / O(n·W)</span>
+        </div>
+        <div class="method-card">
+          <h4>Метод 3 — Жадібний</h4>
+          <p>Макс. питома цінність v/w. Не гарантує оптимум.</p>
+          <span class="complexity">O(n log n)</span>
+        </div>
+        <div class="method-card active-method">
+          <h4>Метод 4 ✔ — Динамічне програмування</h4>
+          <p>Таблиця dp[i][w]. Гарантований оптимум за O(n·W).</p>
+          <span class="complexity">O(n·W)</span>
+        </div>
+        <div class="method-card">
+          <h4>Метод 5 — Гілки і межі</h4>
+          <p>Дерево пошуку з відсіканням гілок. Краще за перебір.</p>
+          <span class="complexity">O(2ⁿ) worst</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="js/data.js"></script>
+  <script src="js/knapsack.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
