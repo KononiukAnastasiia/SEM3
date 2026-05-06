@@ -7,15 +7,27 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+
+  <!-- ═══ ШАПКА ═══ -->
   <header class="page-header">
     <h1>Лабораторна робота №3</h1>
     <h2>Моделювання задачі «Рюкзак» методом динамічного програмування</h2>
-    <p class="subtitle">Варіант 23 · Методологія: Feature-Driven Development </p>
+    <p class="subtitle">Варіант 23 · Feature-Driven Development (FDD)</p>
   </header>
 
   <main class="container">
 
-    <!-- ВХІДНІ ДАНІ + ВИБІР ПРЕДМЕТІВ -->
+    <!-- ═══ ВИБІР МЕТОДУ ═══ -->
+    <section class="panel methods-panel">
+      <h3>🔗 Оберіть метод вирішення задачі «Рюкзак»</h3>
+      <div class="methods-grid" id="methods-grid">
+        <!-- генерується main.js -->
+      </div>
+      <div id="active-method-badge" class="active-method-badge"></div>
+      <div id="method-warning" class="method-warning" style="display:none"></div>
+    </section>
+
+    <!-- ═══ ВХІДНІ ДАНІ ═══ -->
     <section class="panel">
       <h3>📦 Вхідні дані та вибір предметів (Варіант 23)</h3>
       <div id="variant-info" class="variant-info"></div>
@@ -31,47 +43,51 @@
         <button id="selectAllBtn" class="mini-btn">Вибрати всі</button>
         <button id="clearAllBtn"  class="mini-btn secondary">Скинути вибір</button>
       </div>
-
       <div id="items-list" class="items-list"></div>
       <p id="selection-summary" class="selection-summary"></p>
     </section>
 
-    <!-- КЕРУВАННЯ -->
+    <!-- ═══ КЕРУВАННЯ ═══ -->
     <section class="panel controls">
       <h3>⚙️ Керування</h3>
       <div class="buttons">
-        <button id="buildBtn">🗂 Побудувати таблицю</button>
+        <button id="buildBtn">🗂 Розв'язати миттєво</button>
         <button id="stepBtn">▶ Покроково</button>
         <button id="restoreBtn">🔍 Відновити розв'язок</button>
         <button id="resetBtn" class="secondary">↺ Скинути</button>
       </div>
-      <div id="status" class="status">Оберіть предмети та натисніть кнопку для початку.</div>
+      <div class="speed-row">
+        <label for="speedRange">🐢 Швидкість анімації:</label>
+        <input id="speedRange" type="range" min="1" max="5" value="3" />
+        <span id="speed-label">Середня</span>
+        <span class="cap-hint">(1=повільно, 5=швидко)</span>
+      </div>
+      <div id="status" class="status">Оберіть метод і предмети, потім натисніть кнопку.</div>
     </section>
 
-    <!-- ТАБЛИЦЯ ДП -->
+    <!-- ═══ ТАБЛИЦЯ / ВІЗУАЛІЗАЦІЯ ═══ -->
     <section class="panel">
-      <h3>📊 Таблиця динамічного програмування dp[i][w]</h3>
-      <p class="hint">Рядки — вибрані предмети (i = 0…n'), стовпці — місткість (w = 0…W).</p>
+      <h3>📊 Візуалізація роботи алгоритму</h3>
+      <p class="hint">Тут відображається таблиця або дерево рішень залежно від обраного методу.</p>
       <div class="table-wrapper" id="table-wrapper">
-        <p class="empty-hint">Оберіть предмети та дію для побудови таблиці…</p>
+        <p class="empty-hint">Оберіть метод і натисніть кнопку для запуску…</p>
       </div>
       <div class="legend">
-        <div class="legend-item">
-          <span class="legend-color" style="background:#fff3b0;"></span>
-          <span>Поточна комірка</span>
-        </div>
-        <div class="legend-item">
-          <span class="legend-color" style="background:#bbf7d0;"></span>
-          <span>Шлях відновлення</span>
-        </div>
-        <div class="legend-item">
-          <span class="legend-color" style="background:#dbeafe;"></span>
-          <span>Вибраний предмет</span>
-        </div>
+        <div class="legend-item"><span class="legend-color" style="background:#fff3b0;"></span><span>Поточна комірка</span></div>
+        <div class="legend-item"><span class="legend-color" style="background:#bbf7d0;"></span><span>Шлях / Оптимальне рішення</span></div>
+        <div class="legend-item"><span class="legend-color" style="background:#dbeafe;"></span><span>Обраний предмет (ДП)</span></div>
+        <div class="legend-item"><span class="legend-color" style="background:#fecaca;"></span><span>Не вміщується / Відсічено</span></div>
+        <div class="legend-item"><span class="legend-color" style="background:#fef9c3;border:1px solid #ca8a04"></span><span>Найкраща підмножина</span></div>
       </div>
     </section>
 
-    <!-- РЕЗУЛЬТАТИ -->
+    <!-- ═══ ЛОГ КРОКІВ ═══ -->
+    <section class="panel">
+      <h3>🗒 Журнал кроків</h3>
+      <div id="steps-log" class="steps-log"></div>
+    </section>
+
+    <!-- ═══ РЕЗУЛЬТАТИ ═══ -->
     <section class="panel">
       <h3>✅ Результати</h3>
       <div id="results" class="results">
@@ -80,38 +96,7 @@
         <p><strong>Сумарна вага:</strong>               <span id="res-weight">—</span></p>
         <p><strong>Сумарна цінність:</strong>           <span id="res-total">—</span></p>
       </div>
-    </section>
-
-    <!-- МЕТОДИ -->
-    <section class="panel">
-      <h3>🔗 Діаграма взаємодії методів вирішення задачі «Рюкзак»</h3>
-      <div class="methods-grid">
-        <div class="method-card">
-          <h4>Метод 1 — Груба сила</h4>
-          <p>Перебір усіх 2ⁿ підмножин. Точний, але O(2ⁿ).</p>
-          <span class="complexity">O(2ⁿ)</span>
-        </div>
-        <div class="method-card">
-          <h4>Метод 2 — Рекурсія</h4>
-          <p>Розбиття на підзадачі. З мемоізацією — O(n·W).</p>
-          <span class="complexity">O(2ⁿ) / O(n·W)</span>
-        </div>
-        <div class="method-card">
-          <h4>Метод 3 — Жадібний</h4>
-          <p>Макс. питома цінність v/w. Не гарантує оптимум.</p>
-          <span class="complexity">O(n log n)</span>
-        </div>
-        <div class="method-card active-method">
-          <h4>Метод 4 ✔ — Динамічне програмування</h4>
-          <p>Таблиця dp[i][w]. Гарантований оптимум за O(n·W).</p>
-          <span class="complexity">O(n·W)</span>
-        </div>
-        <div class="method-card">
-          <h4>Метод 5 — Гілки і межі</h4>
-          <p>Дерево пошуку з відсіканням гілок. Краще за перебір.</p>
-          <span class="complexity">O(2ⁿ) worst</span>
-        </div>
-      </div>
+      <div id="res-extra" class="res-extra"></div>
     </section>
 
   </main>
@@ -120,5 +105,14 @@
   <script src="js/knapsack.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/main.js"></script>
+
+  <script>
+    // Підпис швидкості
+    const speedLabels = ["Дуже повільно","Повільно","Середня","Швидко","Дуже швидко"];
+    document.getElementById("speedRange").addEventListener("input", function() {
+      document.getElementById("speed-label").textContent = speedLabels[this.value - 1];
+    });
+  </script>
+
 </body>
 </html>
